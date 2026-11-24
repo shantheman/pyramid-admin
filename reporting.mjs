@@ -23,6 +23,20 @@ export function pnl(sources,from,through){
  const gross=sum([play,apple]),netIap=sum([playNet,appleNet]),fees=gross==null||netIap==null?null:gross-netIap;
  return {playSales,play,apple,playNet,appleNet,admob,spend,gross,fees,netIap,income:sum([netIap,admob,spend==null?null:-spend])};
 }
+// The funnel: devices grouped by the day of their first report, and how many
+// of each group have reached each step by now. Steps are listed in the order
+// most players meet them; they are not strictly nested (a player can buy
+// Patron before floor 45), so "of previous" can exceed 100%.
+export const FUNNEL_STEPS=[['installed','Opened the game'],['floor6','Reached floor 6'],['first_boon','Took a deity\u2019s boon'],['floor12','Reached floor 12 \u00b7 first perk'],['returned','Came back on a later day'],['first_ad','Watched a rewarded ad'],['floor25','Reached floor 25 \u00b7 can dedicate'],['dedicated','Dedicated a pyramid'],['floor45','Reached floor 45'],['purchased','Bought Patron of the Gods'],['floor75','Reached floor 75'],['floor100','Reached floor 100'],['floor120','Reached floor 120 \u00b7 the summit']];
+// Steps for devices first seen from..through, optionally on one platform.
+// null when the source cannot answer; a day with no new devices is a true zero.
+export function funnelSteps(source,from,through,platform='all') {
+ if(!source?.records||source.status!=='ok'||!source.from_day||!source.through_day)return null;
+ const rows=source.records.filter(r=>inRange(r,from,through)&&(platform==='all'||r.os===platform));
+ if(rows.some(r=>FUNNEL_STEPS.some(([key])=>!Number.isFinite(Number(r[key])))))return null;
+ return FUNNEL_STEPS.map(([key,label])=>({key,label,count:rows.reduce((sum,r)=>sum+Number(r[key]),0)}));
+}
+export const share=(n,d)=>d?Math.round(n/d*100)+'%':'\u2014';
 export function aggregateDaily(source,key,from,through) {
  const days=[];for(let d=new Date(from+'T12:00:00Z');d.toISOString().slice(0,10)<=through;d.setUTCDate(d.getUTCDate()+1)){
   const day=d.toISOString().slice(0,10);days.push({day,value:sourceTotal(source,key,day,day)});

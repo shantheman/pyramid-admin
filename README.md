@@ -4,7 +4,7 @@ Prepared November 24, 2026. Activation requires the reviewed reporting migration
 exact OAuth redirect, first cache import, hourly job and static publication.
 Intended URL: https://shantheman.github.io/pyramid-admin/.
 
-Four owner-only tabs: Top Metrics, Ad Spend, P&L, Reviews. Public static code
+Five owner-only tabs: Top Metrics, Funnel, Ad Spend, P&L, Reviews. Public static code
 contains only the existing TCG reporting project's public publishable key.
 The owner-only `pyramid_admin_reporting()` RPC returns Pyramid's isolated cache;
 no game server, Pyramid user database, mobile change or new paid project exists.
@@ -32,6 +32,13 @@ and its separate delivery feed before launch; no account-wide ad totals enter
 Pyramid or cross into TCG/Genesis. Creative-level revenue/payers/Cap % have no
 first-party join in this serverless app and stay unavailable. See the shared
 [reporting runbook](../../chimera/docs/runbooks/pyramid-reporting.md).
+
+Funnel follows the Genesis layout: a row per step with devices, share of those
+that opened the game, share of the previous step and a bar. Devices are grouped
+by the Eastern date of their first PostHog report (the Period controls choose
+which arrival dates), and each step counts those that have reached it by now.
+The hourly collector stores aggregate counts per arrival day and platform; no
+device ID is cached. Test builds and reinstalls are included as devices.
 
 Reviews are read-only, safely rendered as text, filtered by store/rating and
 retained across the Play API's short lookback. No AI translation, replies or
