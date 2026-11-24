@@ -38,7 +38,14 @@ that opened the game, share of the previous step and a bar. Devices are grouped
 by the Eastern date of their first PostHog report (the Period controls choose
 which arrival dates), and each step counts those that have reached it by now.
 The hourly collector stores aggregate counts per arrival day and platform; no
-device ID is cached. Test builds and reinstalls are included as devices.
+device ID is cached. A reinstall is a new device.
+
+Test devices follow the Genesis rule of a fixed cutoff: a device first seen
+before the public launch is a test device and stays one. Top Metrics (device
+cards and chart) and Funnel leave them out unless "Include test devices" is
+ticked, and say how many there are. Until the launch time is set in the
+collector's manifest (`launch_utc`, see the Chimera reporting runbook) every
+device is a test device, so both tabs show no players by default.
 
 Reviews are read-only, safely rendered as text, filtered by store/rating and
 retained across the Play API's short lookback. No AI translation, replies or
